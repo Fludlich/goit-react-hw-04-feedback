@@ -5,10 +5,6 @@ import { Sectionn } from './Section/Section';
 import { Notification } from './Notification/Notification';
 
 
-let countFeedback = 0;
-let PositiveFeedback = 0;
-let good = 0;
-
 export class App extends Component {
   state = {
     good: 0,
@@ -20,19 +16,16 @@ export class App extends Component {
     this.setState( {[name]: this.state[name] +1});
     this.countTotalFeedback(name);
   };
-  countTotalFeedback(name) {
-    countFeedback += 1;
-    this.countPositiveFeedbackPercentage(name);
+  countTotalFeedback() {
+    let total=0
+    Object.values(this.state).map(el=>total+= el);
+     return total
   }
-  countPositiveFeedbackPercentage(name) {
-    if (name === 'good') {
-      good += 1;
-      PositiveFeedback = (100 / countFeedback) * good;
-      return (PositiveFeedback = Number.parseInt(PositiveFeedback));
-    } else {
-      PositiveFeedback = (100 / countFeedback) * good;
-      return (PositiveFeedback = Number.parseInt(PositiveFeedback));
-    }
+  countPositiveFeedbackPercentage() {
+    let total=0
+    Object.values(this.state).map(el=>total+= el)
+    const positiveFeedback = Math.round((this.state.good / total) * 100);
+    return positiveFeedback;
   }
   render() {
     const { good, neutral, bad } = this.state;
@@ -45,7 +38,7 @@ export class App extends Component {
             onLeaveFeedback={this.HandleAddFeedback}
           />
         </Sectionn>
-        {countFeedback === 0 ? (
+        {this.countTotalFeedback() === 0 ? (
           <Sectionn>
             <Notification message="No feedback given"></Notification>
           </Sectionn>
@@ -56,8 +49,8 @@ export class App extends Component {
               good={good}
               neutral={neutral}
               bad={bad}
-              total={countFeedback}
-              positivePercentage={PositiveFeedback}
+          total={this.countTotalFeedback()}
+          positivePercentage={this.countPositiveFeedbackPercentage()}
             />
           </Sectionn>
         )}
